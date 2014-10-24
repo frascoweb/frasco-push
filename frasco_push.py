@@ -8,7 +8,8 @@ class PushFeature(Feature):
     defaults = {"redis_host": "localhost",
                 "redis_port": 6379,
                 "server_hostname": None,
-                "server_port": 8888}
+                "server_port": 8888,
+                "server_secured": False}
 
     def init_app(self, app):
         self.options.setdefault("secret", app.config['SECRET_KEY'])
@@ -40,6 +41,8 @@ class PushFeature(Feature):
     def before_request(self):
         current_app.config['EXPORTED_JS_VARS']['TORNADOPUSH_HOSTNAME'] = \
             self.options['server_hostname']
+        current_app.config['EXPORTED_JS_VARS']['TORNADOPUSH_SECURED'] = \
+            self.options['server_secured']
         token = self.create_token()
         if token:
             current_app.config['EXPORTED_JS_VARS']['TORNADOPUSH_TOKEN'] = token
