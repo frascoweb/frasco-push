@@ -34,7 +34,8 @@ class PushFeature(Feature):
         if app.features.exists('assets'):
             app.features.assets.expose_package('tornadopush', 'tornadopush')
             app.assets.register('tornadopush', {
-                "contents": map(lambda s: 'tornadopush/%s' % s, assets.asset_files),
+                "contents": [{"filters": "jsmin",
+                    "contents": map(lambda s: 'tornadopush/%s' % s, assets.asset_files)}],
                 "output": "tornadopush"})
 
     @hook()
