@@ -1,6 +1,7 @@
 from frasco import Feature, action, current_app, hook
 from redis import StrictRedis
 from tornadopush import EventEmitter, assets
+import uuid
 
 
 class PushFeature(Feature):
@@ -9,15 +10,19 @@ class PushFeature(Feature):
                 "redis_port": 6379,
                 "server_hostname": None,
                 "server_port": 8888,
-                "server_secured": False}
+                "server_secured": False,
+                "auth_enabled": True,
+                "create_token_for_anon": False}
 
     def init_app(self, app):
         self.options.setdefault("secret", app.config['SECRET_KEY'])
-        args = ["python", "-m", "tornadopush", "--auth",
+        args = ["python", "-m", "tornadopush",
             "--secret", self.options["secret"],
             "--redis-host", self.options["redis_host"],
             "--redis-port", self.options["redis_port"],
             "--port", self.options["server_port"]]
+        if self.options['auth_enabled']:
+            args.append('--auth')
         if app.debug:
             args.append("--debug")
         app.processes.append(("push", args))
@@ -53,7 +58,9 @@ class PushFeature(Feature):
         if user_id is None and current_app.features.exists('users') and \
           current_app.features.users.logged_in():
             user_id = str(current_app.features.users.current.id)
-        if user_id:
+        if user_id is None and self.options['create_token_for_anon']:
+            user_id = str(uuid.uuid4())
+        if user_id is not None:
             return self.event_emitter.create_token(user_id, allowed_channels)
 
     @action('emit_push_event')
