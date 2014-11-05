@@ -12,7 +12,8 @@ class PushFeature(Feature):
                 "server_port": 8888,
                 "server_secured": False,
                 "auth_enabled": True,
-                "create_token_for_anon": False}
+                "create_token_for_anon": False,
+                "debug": None}
 
     def init_app(self, app):
         self.options.setdefault("secret", app.config['SECRET_KEY'])
@@ -23,7 +24,7 @@ class PushFeature(Feature):
             "--port", self.options["server_port"]]
         if self.options['auth_enabled']:
             args.append('--auth')
-        if app.debug:
+        if self.options['debug'] or (self.options['debug'] is None and app.debug):
             args.append("--debug")
         app.processes.append(("push", args))
         self.redis_client = StrictRedis(self.options["redis_host"],
