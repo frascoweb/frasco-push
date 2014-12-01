@@ -65,5 +65,5 @@ class PushFeature(Feature):
             return self.event_emitter.create_token(user_id, allowed_channels)
 
     @action('emit_push_event')
-    def emit(self, channel, event, data, target=None):
+    def emit(self, channel, event, data=None, target=None):
         self.event_emitter.emit(channel, event, data, target)
