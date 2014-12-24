@@ -6,7 +6,8 @@ import uuid
 
 class PushFeature(Feature):
     name = 'push'
-    defaults = {"redis_host": "localhost",
+    defaults = {"queue": "toredis",
+                "redis_host": "localhost",
                 "redis_port": 6379,
                 "server_hostname": None,
                 "server_port": 8888,
@@ -19,6 +20,7 @@ class PushFeature(Feature):
         self.options.setdefault("secret", app.config['SECRET_KEY'])
         args = ["python", "-m", "tornadopush",
             "--secret", self.options["secret"],
+            "--queue", self.options["queue"],
             "--redis-host", self.options["redis_host"],
             "--redis-port", self.options["redis_port"],
             "--port", self.options["server_port"]]
