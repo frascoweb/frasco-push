@@ -35,9 +35,10 @@ class PushFeature(Feature):
         app.jinja_env.globals['create_push_token'] = self.create_token
 
         if not self.options["server_hostname"]:
+            server_name = app.config.get('SERVER_NAME', 'localhost')
+
             self.options["server_hostname"] = "%s:%s" % (
-                app.config['SERVER_NAME'] or 'localhost',
-                self.options['server_port'])
+                server_name.split(':')[0], self.options['server_port'])
 
         if app.features.exists('assets'):
             app.features.assets.expose_package('tornadopush', 'tornadopush')
