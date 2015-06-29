@@ -29,7 +29,7 @@ class PushFeature(Feature):
                 self.options['redis_port'] = port
             else:
                 self.options['redis_host'] = r.netloc
-        elif not self.options['host']:
+        elif not self.options['redis_host']:
             self.options['redis_host'] = 'localhost'
 
         args = ["python", "-m", "tornadopush",
