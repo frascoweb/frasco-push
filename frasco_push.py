@@ -2,22 +2,36 @@ from frasco import Feature, action, current_app, hook
 from redis import StrictRedis
 from tornadopush import EventEmitter, assets
 import uuid
+import urlparse
 
 
 class PushFeature(Feature):
     name = 'push'
     defaults = {"queue": "toredis",
-                "redis_host": "localhost",
+                "redis_host": None,
                 "redis_port": 6379,
                 "server_hostname": None,
                 "server_port": 8888,
                 "server_secured": False,
                 "auth_enabled": True,
                 "create_token_for_anon": False,
-                "debug": None}
+                "debug": None,
+                "assets_output": "tornadopush"}
 
     def init_app(self, app):
         self.options.setdefault("secret", app.config['SECRET_KEY'])
+        
+        if not self.options['redis_host'] and 'redis' in app.features:
+            r = urlparse.urlparse(app.features.redis.options['url'])
+            if ':' in r.netloc:
+                host, port = r.netloc.split(':')
+                self.options['redis_host'] = host
+                self.options['redis_port'] = port
+            else:
+                self.options['redis_host'] = r.netloc
+        elif not self.options['host']:
+            self.options['redis_host'] = 'localhost'
+
         args = ["python", "-m", "tornadopush",
             "--secret", self.options["secret"],
             "--queue", self.options["queue"],
@@ -45,7 +59,7 @@ class PushFeature(Feature):
             app.assets.register('tornadopush', {
                 "contents": [{"filters": "jsmin",
                     "contents": map(lambda s: 'tornadopush/%s' % s, assets.asset_files)}],
-                "output": "tornadopush"})
+                "output": self.options['assets_output']})
 
     @hook()
     def before_request(self):
