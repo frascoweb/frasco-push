@@ -16,7 +16,8 @@ class PushFeature(Feature):
                 "auth_enabled": True,
                 "create_token_for_anon": False,
                 "debug": None,
-                "assets_output": "tornadopush"}
+                "assets_output": "tornadopush",
+                "ignore_own_messages": False}
 
     def init_app(self, app):
         self.options.setdefault("secret", app.config['SECRET_KEY'])
@@ -40,6 +41,8 @@ class PushFeature(Feature):
             "--port", self.options["server_port"]]
         if self.options['auth_enabled']:
             args.append('--auth')
+        if self.options['ignore_own_messages']:
+            args.append('--ignore-own-messages')
         if self.options['debug'] or (self.options['debug'] is None and app.debug):
             args.append("--debug")
         app.processes.append(("push", args))
@@ -82,5 +85,5 @@ class PushFeature(Feature):
             return self.event_emitter.create_token(user_id, allowed_channels)
 
     @action('emit_push_event')
-    def emit(self, channel, event, data=None, target=None, serialize=True):
-        self.event_emitter.emit(channel, event, data, target, serialize)
+    def emit(self, channel, event, data=None, sender=None, target=None, serialize=True):
+        self.event_emitter.emit(channel, event, data, sender, target, serialize)
