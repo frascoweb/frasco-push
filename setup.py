@@ -3,17 +3,19 @@ from setuptools import setup, find_packages
 
 setup(
     name='frasco-push',
-    version='0.2',
+    version='0.3',
     url='http://github.com/frascoweb/frasco-push',
     license='MIT',
     author='Maxime Bouroumeau-Fuseau',
     author_email='maxime.bouroumeau@gmail.com',
-    description="Tornadopush integration into Frasco",
+    description="Socket.IO integration from Frasco",
     py_modules=["frasco_push"],
     zip_safe=False,
     platforms='any',
     install_requires=[
         'frasco',
-        'tornadopush>=0.8'
+        'redis',
+        'python-socketio',
+        'eventlet'
     ]
 )
