@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='frasco-push',
-    version='0.3',
+    version='0.3.1',
     url='http://github.com/frascoweb/frasco-push',
     license='MIT',
     author='Maxime Bouroumeau-Fuseau',

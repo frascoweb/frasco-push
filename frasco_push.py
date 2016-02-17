@@ -1,4 +1,5 @@
 from frasco import Feature, action, current_app, hook, request, command, current_context
+from flask import has_request_context
 import socketio
 import os
 import urlparse
@@ -106,7 +107,7 @@ class PushFeature(Feature):
             event = "%s:%s" % (room, event)
         if skip_self is None:
             skip_self = self.options['skip_self']
-        if skip_self and 'x-socketio-sid' in request.headers:
+        if skip_self and has_request_context() and 'x-socketio-sid' in request.headers:
             kwargs['skip_sid'] = request.headers['x-socketio-sid']
         return self.manager.emit(event, data=data, room=room, **kwargs)
 
