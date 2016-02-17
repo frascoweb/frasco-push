@@ -14,6 +14,7 @@ class PushFeature(Feature):
     defaults = {"redis_url": None,
                 "server_url": None,
                 "server_port": 8888,
+                "server_secured": False,
                 "channel": "socketio",
                 "sio_client_version": "1.4.5",
                 "skip_self": False,
@@ -38,7 +39,8 @@ class PushFeature(Feature):
 
         if not self.options["server_url"]:
             server_name = app.config.get('SERVER_NAME') or 'localhost'
-            self.options["server_url"] = "http://%s:%s" % (
+            self.options["server_url"] = "%s://%s:%s" % (
+                "https" if self.options['server_secured'] else "http",
                 server_name.split(':')[0], self.options['server_port'])
 
         if app.features.exists('assets'):
