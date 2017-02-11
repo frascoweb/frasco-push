@@ -255,11 +255,11 @@ if __name__ == '__main__':
         description='Start tornadopush server')
     argparser.add_argument('-p', '--port', default=8888, type=int,
         help='Port number')
-    argparser.add_argument('-r', '--redis', default='redis://', type=str,
+    argparser.add_argument('-r', '--redis', default=os.environ.get('SIO_REDIS_URL', 'redis://'), type=str,
         help='Redis URL')
-    argparser.add_argument('-c', '--channel', default='socketio', type=str,
+    argparser.add_argument('-c', '--channel', default=os.environ.get('SIO_CHANNEL', 'socketio'), type=str,
         help='Channel')
-    argparser.add_argument('-s', '--secret', default=None, type=str,
+    argparser.add_argument('-s', '--secret', default=os.environ.get('SIO_SECRET'), type=str,
         help='Secret')
     args = argparser.parse_args()
     run_server(args.port, redis_url=args.redis, channel=args.channel, secret=args.secret)
