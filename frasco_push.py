@@ -243,6 +243,7 @@ def cleanup_wsgi_app():
 def run_server(port=8888, **kwargs):
     from eventlet import wsgi
     import eventlet
+    eventlet.sleep()
     eventlet.monkey_patch()
     env = dict([("SIO_%s" % k.upper(), v) for k, v in kwargs.items()])
     wsgi.server(eventlet.listen(('', port)), wsgi_app, environ=env)
